@@ -10,7 +10,7 @@ int main(int argc, char* argv[]) {
 		// ‰üs
 		printf("\n");
 	}
-
+	
 	system("pause");
 	return 0;
 }
