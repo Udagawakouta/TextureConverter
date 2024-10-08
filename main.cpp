@@ -1,16 +1,30 @@
 #include <cstdio>
 #include <cstdlib>
+#include <cassert>
+#include "TextureConverter.h"
+#include <windows.h>
 
-int main(int argc, char* argv[]) {
+enum Argument
+{
+	kApplicationPath, // アプリケーションのパス
+	kFilePath,		  // 渡されたファイルのパス
 
-	// argcの数だけ繰り返す
-	for (int i = 1; i < argc; i++){
-		// 文字列argvのi番を表示
-		printf(argv[i]);
-		// 改行
-		printf("\n");
-	}
+	NumArgument
+};
+
+int main(int argc, char* argv[]) 
+{
+	assert(argc >= NumArgument);
+
+	HRESULT hr = CoInitializeEx(nullptr, COINIT_MULTITHREADED);
+	assert(SUCCEEDED(hr));
+
+	// テクスチャコンバーター
+	TextureConverter converter;
+	// テクスチャ変換
+	converter.ConvertTextureWICToDDS(argv[kFilePath]);
 	
+	CoUninitialize();
 	system("pause");
 	return 0;
 }
