@@ -20,8 +20,8 @@ private:
 
 	static std::wstring ConvertMultiByteStringToWideString(const std::string& mString);
 
-
+	// 画像の情報
 	DirectX::TexMetadata metadata_;
-
+	// 画像のイメージのコンテナ
 	DirectX::ScratchImage scratchImage_;
 };
