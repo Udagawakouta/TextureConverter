@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+#include "external/DirectXTex/DirectXTex.h"
 
 // テクスチャコンバーター
 class TextureConverter
@@ -18,4 +19,9 @@ private:
 	void LoadWICTextureFromFile(const std::string& filepath);
 
 	static std::wstring ConvertMultiByteStringToWideString(const std::string& mString);
+
+
+	DirectX::TexMetadata metadata_;
+
+	DirectX::ScratchImage scratchImage_;
 };
