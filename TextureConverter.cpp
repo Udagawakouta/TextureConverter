@@ -16,6 +16,47 @@ void TextureConverter::ConvertTextureWICToDDS(const std::string& filePath)
 	LoadWICTextureFromFile(filePath);
 }
 
+void TextureConverter::SeparateFilepath(const std::wstring& filePath)
+{
+	size_t pos1;
+	std::wstring exceptExt;
+
+	// 区切り文字 '.'が出てくる一番最後の部分を検索
+	pos1 = filePath.rfind('.');
+	// 検索がヒットしたら
+	if (pos1 != std::wstring::npos)
+	{
+		// 区切り文字の後ろをファイル拡張子として保存
+		fileExt_ = filePath.substr(pos1 + 1, filePath.size() - pos1 - 1);
+		// 区切り文字の前までを抜き出す
+		exceptExt = filePath.substr(0, pos1);
+	}
+	else
+	{
+		fileExt_ = L"";
+		exceptExt = filePath;
+	}
+	// 区切り文字 '.'が出てくる一番最後の部分を検索
+	pos1 = exceptExt.rfind('\\');
+	if (pos1 !=std::wstring::npos)
+	{
+		// 区切り文字の前までをディレクトリパスとして保存
+		directoryPath_ = exceptExt.substr(0, pos1 + 1);
+		// 区切り文字の後ろをファイル名として保存
+		fileName_ = exceptExt.substr(pos1 + 1, exceptExt.size() - pos1 - 1);
+		return;
+	}
+	// 区切り文字 '.'が出てくる一番最後の部分を検索
+	pos1 = exceptExt.rfind('/');
+	if (pos1 !=std::wstring::npos)
+	{
+
+	}
+	directoryPath_ = L"";
+	fileName_ = exceptExt;
+
+}
+
 void TextureConverter::LoadWICTextureFromFile(const std::string& filePath)
 {
 	// ファイルパスをワイド文字列に変換する
@@ -25,6 +66,9 @@ void TextureConverter::LoadWICTextureFromFile(const std::string& filePath)
 	HRESULT result;
 	result = LoadFromWICFile(wfilePath.c_str(), WIC_FLAGS_NONE, &metadata_, scratchImage_);
 	assert(SUCCEEDED(result));
+	
+	// フォルダパスとファイル名を分解する
+	SeparateFilepath(wfilePath);
 }
 
 std::wstring TextureConverter::ConvertMultiByteStringToWideString(const std::string& mString)
