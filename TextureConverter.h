@@ -27,6 +27,8 @@ private:
 
 	static std::wstring ConvertMultiByteStringToWideString(const std::string& mString);
 
+	void SaveDDSTextureToFile();
+
 	// 画像の情報
 	DirectX::TexMetadata metadata_;
 	// 画像のイメージのコンテナ
