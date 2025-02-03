@@ -2,12 +2,13 @@
 #include <cstdlib>
 #include <cassert>
 #include "TextureConverter.h"
+#include "TextureManager.h"
 #include <windows.h>
 
 enum Argument
 {
-	kApplicationPath, // ƒAƒvƒŠƒP[ƒVƒ‡ƒ“‚ÌƒpƒX
-	kFilePath,		  // “n‚³‚ê‚½ƒtƒ@ƒCƒ‹‚ÌƒpƒX
+	kApplicationPath, // ã‚¢ãƒ—ãƒªã‚±ãƒ¼ã‚·ãƒ§ãƒ³ã®ãƒ‘ã‚¹
+	kFilePath,		  // æ¸¡ã•ã‚ŒãŸãƒ•ã‚¡ã‚¤ãƒ«ã®ãƒ‘ã‚¹
 
 	NumArgument
 };
@@ -19,12 +20,12 @@ int main(int argc, char* argv[])
 	HRESULT hr = CoInitializeEx(nullptr, COINIT_MULTITHREADED);
 	assert(SUCCEEDED(hr));
 
-	DirectX::ScratchImage LoadTexture(const std::string & filePath);
-	DirectX::ScratchImage mipImages = LoadTexture("resources/uvChecker.png");
+	/*DirectX::ScratchImage LoadTexture(const std::string & filePath);
+	DirectX::ScratchImage mipImages = LoadTexture("resources/uvChecker.png");*/
 
-	// ƒeƒNƒXƒ`ƒƒƒRƒ“ƒo[ƒ^[
+	// ãƒ†ã‚¯ã‚¹ãƒãƒ£ã‚³ãƒ³ãƒãƒ¼ã‚¿ãƒ¼
 	TextureConverter converter;
-	// ƒeƒNƒXƒ`ƒƒ•ÏŠ·
+	// ãƒ†ã‚¯ã‚¹ãƒãƒ£å¤‰æ›
 	converter.ConvertTextureWICToDDS(argv[kFilePath]);
 	
 	CoUninitialize();
@@ -32,18 +33,54 @@ int main(int argc, char* argv[])
 	return 0;
 }
 
+
+
+std::wstring ConvertString(const std::string& str)
+{
+	if (str.empty())
+	{
+		return std::wstring();
+	}
+
+	auto sizeNeeded = MultiByteToWideChar(CP_UTF8, 0, reinterpret_cast<const char*>(&str[0]), static_cast<int>(str.size()), NULL, 0);
+	if (sizeNeeded == 0)
+	{
+		return std::wstring();
+	}
+	std::wstring result(sizeNeeded, 0);
+	MultiByteToWideChar(CP_UTF8, 0, reinterpret_cast<const char*>(&str[0]), static_cast<int>(str.size()), &result[0], sizeNeeded);
+	return result;
+}
+
+std::string ConvertString(const std::wstring& str)
+{
+	if (str.empty())
+	{
+		return std::string();
+	}
+
+	auto sizeNeeded = WideCharToMultiByte(CP_UTF8, 0, str.data(), static_cast<int>(str.size()), NULL, 0, NULL, NULL);
+	if (sizeNeeded == 0)
+	{
+		return std::string();
+	}
+	std::string result(sizeNeeded, 0);
+	WideCharToMultiByte(CP_UTF8, 0, str.data(), static_cast<int>(str.size()), result.data(), sizeNeeded, NULL, NULL);
+	return result;
+}
+
 DirectX::ScratchImage LoadTexture(const std::string& filePath) {
-	//ƒeƒNƒXƒ`ƒƒƒtƒ@ƒCƒ‹‚ð‹²‚ñ‚ÅƒvƒƒOƒ‰ƒ€‚Åˆµ‚¦‚é‚æ‚¤‚É‚·‚é
+	//ãƒ†ã‚¯ã‚¹ãƒãƒ£ãƒ•ã‚¡ã‚¤ãƒ«ã‚’æŒŸã‚“ã§ãƒ—ãƒ­ã‚°ãƒ©ãƒ ã§æ‰±ãˆã‚‹ã‚ˆã†ã«ã™ã‚‹
 	DirectX::ScratchImage image{};
 	std::wstring filePathW = ConvertString(filePath);
 	HRESULT hr = DirectX::LoadFromWICFile(filePathW.c_str(), DirectX::WIC_FLAGS_FORCE_SRGB, nullptr, image);
 	assert(SUCCEEDED(hr));
 
-	//ƒ~ƒbƒvƒ}ƒbƒv‚Ìì¬
+	//ãƒŸãƒƒãƒ—ãƒžãƒƒãƒ—ã®ä½œæˆ
 	DirectX::ScratchImage mipImages{};
 	hr = DirectX::GenerateMipMaps(image.GetImages(), image.GetImageCount(), image.GetMetadata(), DirectX::TEX_FILTER_SRGB, 0, mipImages);
 	assert(SUCCEEDED(hr));
 
-	//ƒ~ƒbƒvƒ}ƒbƒv•t‚«‚Ìƒf[ƒ^‚ðÁ‚·
+	//ãƒŸãƒƒãƒ—ãƒžãƒƒãƒ—ä»˜ãã®ãƒ‡ãƒ¼ã‚¿ã‚’æ¶ˆã™
 	return mipImages;
 }
