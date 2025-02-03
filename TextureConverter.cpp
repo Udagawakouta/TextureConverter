@@ -80,7 +80,11 @@ void TextureConverter::SeparateFilepath(const std::wstring& filePath)
 	pos1 = exceptExt.rfind('/');
 	if (pos1 !=std::wstring::npos)
 	{
-
+		// 区切り文字の前までをディレクトリパスとして保存
+		directoryPath_ = exceptExt.substr(0, pos1 + 1);
+		// 区切り文字の後ろをファイル名として保存
+		fileName_ = exceptExt.substr(pos1 + 1, exceptExt.size() - pos1 - 1);
+		return;
 	}
 	directoryPath_ = L"";
 	fileName_ = exceptExt;
