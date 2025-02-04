@@ -14,6 +14,8 @@ void TextureConverter::ConvertTextureWICToDDS(const std::string& filePath)
 {
 	// テクスチャファイルを読み込む
 	LoadWICTextureFromFile(filePath);
+
+	SaveDDSTextureToFile();
 }
 
 std::wstring TextureConverter::ConvertMultiByteStringToWideString(const std::string& mString)
