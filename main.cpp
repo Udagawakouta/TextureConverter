@@ -2,7 +2,6 @@
 #include <cstdlib>
 #include <cassert>
 #include "TextureConverter.h"
-#include "TextureManager.h"
 #include <windows.h>
 
 enum Argument
